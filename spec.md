@@ -2,6 +2,9 @@
 - Starting page: Display a "Start Game" button and wait for the user to click
     - hover effect on the button
     - press Enter to start
+    - click animation
+    - click sound
+    - Slightly scale the button or change text color when hovering.
 - Game over and replay
 - Pause
 - Add an explosion effect for the asteroids

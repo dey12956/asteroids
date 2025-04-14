@@ -7,9 +7,10 @@ from asteroid import *
 from asteroidfield import *
 from shot import *
 from startscreen import start_screen
+from gameoverscreen import game_over_screen
 
 
-def main():
+def main(play_again=False):
     pygame.init()
 
     clock = pygame.time.Clock()
@@ -24,7 +25,8 @@ def main():
     heart_img = pygame.image.load("heart.png").convert_alpha()
     heart_img = pygame.transform.scale(heart_img, (36, 36))
 
-    start_screen(screen, font)
+    if not play_again:
+        start_screen(screen, font)
 
     updatable = pygame.sprite.Group()
     drawable = pygame.sprite.Group()
@@ -44,7 +46,8 @@ def main():
         # exit program
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                return
+                pygame.quit()
+                sys.exit()
 
         # update objects
         updatable.update(dt)
@@ -79,9 +82,9 @@ def main():
                     if lives > 0:
                         player.respawn()
                     else:
-                        game_over_text = font.render("GAME OVER!", True, (255, 255, 255))
-                        screen.blit(game_over_text, (SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2))
-                        sys.exit()
+                        game_over_screen(screen, font, score)
+                        main(play_again=True)
+                        
                 for shot in shots:
                     if asteroid.detect_collision(shot):
                         asteroid.split()
