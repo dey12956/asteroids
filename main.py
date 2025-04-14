@@ -14,6 +14,7 @@ from loadexplosionframes import load_explosion_frames
 
 def main(play_again=False):
     pygame.init()
+    pygame.mixer.init()
 
     clock = pygame.time.Clock()
     dt = 0
@@ -30,6 +31,8 @@ def main(play_again=False):
     explosion_images = load_explosion_frames(
                         pygame.image.load("explosion.png").convert_alpha()
                         )
+
+    explosion_sound = pygame.mixer.Sound("explosion.wav")
 
 
     if not play_again:
@@ -98,6 +101,7 @@ def main(play_again=False):
                         asteroid.split()
                         shot.kill()
                         score += 1
+                        explosion_sound.play()
                         Explosion(asteroid.position.x, asteroid.position.y, explosion_images)
 
         player.respawn_update(dt)
