@@ -15,14 +15,11 @@ def main():
     dt = 0
 
     score = 0
-    font = pygame.font.SysFont("Chalkduster", 36)
-
-    lives = 5
-    respawn_timer = 0
-    invincible = False
+    font = pygame.font.SysFont("Chalkduster", 36) 
 
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
+    lives = 5
     heart_img = pygame.image.load("heart.png").convert_alpha()
     heart_img = pygame.transform.scale(heart_img, (36, 36))
 
@@ -38,7 +35,7 @@ def main():
     player = Player(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)
     flicker_timer = 0
 
-    asteroidfield = AsteroidField()
+    AsteroidField()
 
     while True:
         # exit program
@@ -47,11 +44,7 @@ def main():
                 return
 
         # update objects
-        for obj in updatable:
-            if isinstance(obj, Player):
-                obj.update(dt, invincible)
-            else:
-                obj.update(dt)
+        updatable.update(dt)
 
         # paint the screen black
         screen.fill((0, 0, 0))
@@ -59,7 +52,7 @@ def main():
         #draw objects
         for thing in drawable:
             flicker_timer += dt
-            if invincible and (type(thing) == Player):
+            if player.invincible and isinstance(thing, Player):
                 if int(flicker_timer / 0.2) % 2 == 0:
                     continue
             thing.draw(screen)
@@ -76,16 +69,12 @@ def main():
         pygame.display.flip()
 
         # collision mechanisms
-        if not invincible:
+        if not player.invincible:
             for asteroid in asteroids:
                 if asteroid.detect_collision(player):
                     lives -= 1
                     if lives > 0:
-                        invincible = True
-                        player.position = pygame.Vector2(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)
-                        player.velocity = pygame.Vector2(0, 0)
-                        player.rotation = 0
-                        respawn_timer = 0
+                        player.respawn()
                     else:
                         game_over_text = font.render("GAME OVER!", True, (255, 255, 255))
                         screen.blit(game_over_text, (SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2))
@@ -96,13 +85,8 @@ def main():
                         shot.kill()
                         score += 1
 
-        # respawning 
-        if invincible:
-            respawn_timer += dt
-            if respawn_timer >= RESPAWN_TIME:
-                invincible = False
+        player.respawn_update(dt)
 
-        
         # fps = 60, calculate dt
         dt = clock.tick(60) / 1000
 
