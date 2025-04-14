@@ -1,11 +1,8 @@
 # To-Do:
-- Starting page: Display a "Start Game" button and wait for the user to click
-    - hover effect on the button
-    - press Enter to start
+- Start button
     - click animation
     - click sound
     - Slightly scale the button or change text color when hovering.
-- Game over and replay
 - Pause
 - Add an explosion effect for the asteroids
 - Add acceleration to the player movement
@@ -21,3 +18,6 @@
 # Done
 - Scoring system
 - Implement multiple lives and respawning
+- Game over and replay
+- Starting page: Display a "Start Game" button and wait for the user to click
+    - hover effect on the button

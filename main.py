@@ -8,6 +8,8 @@ from asteroidfield import *
 from shot import *
 from startscreen import start_screen
 from gameoverscreen import game_over_screen
+from explosion import Explosion
+from loadexplosionframes import load_explosion_frames
 
 
 def main(play_again=False):
@@ -25,6 +27,11 @@ def main(play_again=False):
     heart_img = pygame.image.load("heart.png").convert_alpha()
     heart_img = pygame.transform.scale(heart_img, (36, 36))
 
+    explosion_images = load_explosion_frames(
+                        pygame.image.load("explosion.png").convert_alpha()
+                        )
+
+
     if not play_again:
         start_screen(screen, font)
 
@@ -36,6 +43,7 @@ def main(play_again=False):
     Asteroid.containers = (asteroids, updatable, drawable)
     AsteroidField.containers = (updatable)
     Shot.containers = (updatable, drawable, shots)
+    Explosion.containers = (updatable, drawable)
 
     player = Player(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)
     flicker_timer = 0
@@ -90,6 +98,7 @@ def main(play_again=False):
                         asteroid.split()
                         shot.kill()
                         score += 1
+                        Explosion(asteroid.position.x, asteroid.position.y, explosion_images)
 
         player.respawn_update(dt)
 
