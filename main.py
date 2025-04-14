@@ -17,7 +17,14 @@ def main():
     score = 0
     font = pygame.font.SysFont("Chalkduster", 36)
 
+    lives = 5
+    respawn_timer = 0
+    invincible = False
+
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+
+    heart_img = pygame.image.load("heart.png").convert_alpha()
+    heart_img = pygame.transform.scale(heart_img, (36, 36))
 
     updatable = pygame.sprite.Group()
     drawable = pygame.sprite.Group()
@@ -29,28 +36,74 @@ def main():
     Shot.containers = (updatable, drawable, shots)
 
     player = Player(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)
+    flicker_timer = 0
+
     asteroidfield = AsteroidField()
 
     while True:
+        # exit program
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 return
-        updatable.update(dt)
+
+        # update objects
+        for obj in updatable:
+            if isinstance(obj, Player):
+                obj.update(dt, invincible)
+            else:
+                obj.update(dt)
+
+        # paint the screen black
         screen.fill((0, 0, 0))
+
+        #draw objects
         for thing in drawable:
+            flicker_timer += dt
+            if invincible and (type(thing) == Player):
+                if int(flicker_timer / 0.2) % 2 == 0:
+                    continue
             thing.draw(screen)
+
+        # rendering score
         score_text = font.render(f"Score: {score}", True, (255, 255, 255))
         screen.blit(score_text, (10, 10))
+
+        # rendering lives
+        for i in range(lives):
+            screen.blit(heart_img, (10 + i * 35, 50))
+
+        # new frame
         pygame.display.flip()
-        for asteroid in asteroids:
-            if asteroid.detect_collision(player):
-                print("Game over!")
-                sys.exit()
-            for shot in shots:
-                if asteroid.detect_collision(shot):
-                    asteroid.split()
-                    shot.kill()
-                    score += 1
+
+        # collision mechanisms
+        if not invincible:
+            for asteroid in asteroids:
+                if asteroid.detect_collision(player):
+                    lives -= 1
+                    if lives > 0:
+                        invincible = True
+                        player.position = pygame.Vector2(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)
+                        player.velocity = pygame.Vector2(0, 0)
+                        player.rotation = 0
+                        respawn_timer = 0
+                    else:
+                        game_over_text = font.render("GAME OVER!", True, (255, 255, 255))
+                        screen.blit(game_over_text, (SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2))
+                        sys.exit()
+                for shot in shots:
+                    if asteroid.detect_collision(shot):
+                        asteroid.split()
+                        shot.kill()
+                        score += 1
+
+        # respawning 
+        if invincible:
+            respawn_timer += dt
+            if respawn_timer >= RESPAWN_TIME:
+                invincible = False
+
+        
+        # fps = 60, calculate dt
         dt = clock.tick(60) / 1000
 
 
