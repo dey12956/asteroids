@@ -6,6 +6,7 @@ from player import *
 from asteroid import *
 from asteroidfield import *
 from shot import *
+from startscreen import start_screen
 
 
 def main():
@@ -22,6 +23,8 @@ def main():
     lives = 5
     heart_img = pygame.image.load("heart.png").convert_alpha()
     heart_img = pygame.transform.scale(heart_img, (36, 36))
+
+    start_screen(screen, font)
 
     updatable = pygame.sprite.Group()
     drawable = pygame.sprite.Group()
