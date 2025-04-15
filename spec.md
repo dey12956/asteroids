@@ -4,7 +4,6 @@
     - click sound
     - Slightly scale the button or change text color when hovering.
 - Pause
-- Add an explosion effect for the asteroids
 - Add acceleration to the player movement
 - Make the objects wrap around the screen instead of disappearing
 - Add a background image
@@ -21,3 +20,4 @@
 - Game over and replay
 - Starting page: Display a "Start Game" button and wait for the user to click
     - hover effect on the button
+- Add an explosion effect for the asteroids

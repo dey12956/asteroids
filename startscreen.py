@@ -2,6 +2,12 @@ from constants import *
 import pygame
 import sys
 
+pygame.init()
+pygame.mixer.init()
+menu_selection_sound = pygame.mixer.Sound("menu_selection_click.wav")
+click_sound = pygame.mixer.Sound("click.wav")
+hovered_last_frame = False
+
 def start_screen(screen, font):
     title_font = pygame.font.SysFont("Chalkduster", 108)
     button_rect = pygame.Rect(SCREEN_WIDTH // 2 - 150, SCREEN_HEIGHT // 2 - 40, 300, 80)
@@ -17,8 +23,12 @@ def start_screen(screen, font):
         mouse_pos = pygame.mouse.get_pos()
         if button_rect.collidepoint(mouse_pos):
             button_color = (200, 200, 200)  # lighter when hovered
+            if not hovered_last_frame:
+                menu_selection_sound.play()
+                hovered_last_frame = True
         else:
             button_color = (255, 255, 255)
+            hovered_last_frame = False
 
         # Draw button
         pygame.draw.rect(screen, button_color, button_rect, border_radius=10)
@@ -34,5 +44,6 @@ def start_screen(screen, font):
                 sys.exit()
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if button_rect.collidepoint(event.pos):
+                    click_sound.play()
                     return
 

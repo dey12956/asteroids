@@ -24,6 +24,9 @@ def main(play_again=False):
 
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
+    background_img = pygame.image.load("space.png").convert_alpha()
+    background_img = pygame.transform.scale(background_img, (SCREEN_WIDTH, SCREEN_HEIGHT))
+
     lives = 5
     heart_img = pygame.image.load("heart.png").convert_alpha()
     heart_img = pygame.transform.scale(heart_img, (36, 36))
@@ -33,7 +36,9 @@ def main(play_again=False):
                         )
 
     explosion_sound = pygame.mixer.Sound("explosion.wav")
-
+    game_over_sound = pygame.mixer.Sound("game_over.mp3")
+    respawn_sound = pygame.mixer.Sound("vgdeathsound.wav")
+    
 
     if not play_again:
         start_screen(screen, font)
@@ -63,8 +68,8 @@ def main(play_again=False):
         # update objects
         updatable.update(dt)
 
-        # paint the screen black
-        screen.fill((0, 0, 0))
+        # paint the screen background
+        screen.blit(background_img, (0, 0))
 
         #draw objects
         for thing in drawable:
@@ -91,8 +96,10 @@ def main(play_again=False):
                 if asteroid.detect_collision(player):
                     lives -= 1
                     if lives > 0:
+                        respawn_sound.play()
                         player.respawn()
                     else:
+                        game_over_sound.play()
                         game_over_screen(screen, font, score)
                         main(play_again=True)
                         
